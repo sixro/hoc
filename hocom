@@ -58,10 +58,8 @@ for author in `cat $authors_file`; do
 		cp ${temp_file} $author_stat_file
 	fi
 
-	hoc=`awk '/^[0-9]/ { hoc = hoc + $1 + $2 } END { print hoc }' $author_stat_file`
-	if [ "x$hoc" != "x" ]; then
-		echo "$hoc $author"
-	fi
+	hoc=`awk 'BEGIN { hoc = 0 } /^[0-9]/ { hoc = hoc + $1 + $2 } END { print hoc }' $author_stat_file`
+	echo "$hoc $author"
 done
 
 popd > /dev/null
