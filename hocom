@@ -14,9 +14,13 @@ fi
 directory="."
 verbose=0
 since=`date "+%Y-%m-%d"`
+filter=""
 while [ $# -gt 0 ]; do
 	case $1 in
 		-s) since="$2"
+		    shift
+		    ;;
+		-f) filter="$2"
 		    shift
 		    ;;
 		-v) verbose=1
@@ -30,8 +34,10 @@ done
 if [ $verbose = 1 ]; then
 	echo "Directory ...................: $directory"
 	echo "Since .......................: $since"
+	echo "Filter ......................: $filter"
 fi
 
+temp_file="/tmp/${script}_$$"
 authors_file="/tmp/${script}_authors_$$"
 
 pushd $directory > /dev/null
@@ -42,9 +48,20 @@ IFS="
 "
 for author in `cat $authors_file`; do
 	author_stat_file="/tmp/${script}_author_stat_$$"
+
+	# extract stats for specific author...
 	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --since="$since" > $author_stat_file
+
+	# filter previous output...
+	if [ "x$filter" != "x" ]; then
+		grep "$filter" $author_stat_file > ${temp_file}
+		cp ${temp_file} $author_stat_file
+	fi
+
 	hoc=`awk '/^[0-9]/ { hoc = hoc + $1 + $2 } END { print hoc }' $author_stat_file`
-	echo "$hoc $author"
+	if [ "x$hoc" != "x" ]; then
+		echo "$hoc $author"
+	fi
 done
 
 popd > /dev/null
