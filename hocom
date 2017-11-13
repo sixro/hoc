@@ -4,10 +4,14 @@
 
 script=`basename $0`
 if [ $# = 0 ]; then
-	echo "Usage: $script OPTIONS... PRJDIR"
+	echo "Usage: $script [OPTIONS]... [PRJDIR]"
 	echo "where OPTIONS can be:"
-	echo "  -v       enable verbose output"
-	echo "and PRJDIR represents the (parent) project maven dir"
+	echo "  -v       enable verbose output (default: false)"
+	echo "  -s       set the date since you need hoc (default: today)"
+	echo "  -f       set a filter on all files to calculate an hoc on specific files/dirs (default: none)"
+	echo "and PRJDIR represents the (parent) project maven dir (default: current dir)"
+	echo ""
+	echo "Software required: git, grep and awk"
 	exit 2
 fi
 
