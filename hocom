@@ -13,8 +13,12 @@ fi
 
 directory="."
 verbose=0
+since=`date "+%Y-%m-%d"`
 while [ $# -gt 0 ]; do
 	case $1 in
+		-s) since="$2"
+		    shift
+		    ;;
 		-v) verbose=1
 		    ;;
 		*)  directory="$1"
@@ -25,6 +29,22 @@ done
 
 if [ $verbose = 1 ]; then
 	echo "Directory ...................: $directory"
+	echo "Since .......................: $since"
 fi
 
-echo "Hello World!"
+authors_file="/tmp/${script}_authors_$$"
+
+pushd $directory > /dev/null
+
+git --no-pager log --pretty=format:%an --date=iso --since="$since" | sort -u > $authors_file
+
+IFS="
+"
+for author in `cat $authors_file`; do
+	author_stat_file="/tmp/${script}_author_stat_$$"
+	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --since="$since" > $author_stat_file
+	hoc=`awk '/^[0-9]/ { hoc = hoc + $1 + $2 } END { print hoc }' $author_stat_file`
+	echo "$hoc $author"
+done
+
+popd > /dev/null
