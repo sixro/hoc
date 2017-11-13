@@ -1,0 +1,30 @@
+#! /bin/sh
+
+#set -x
+
+script=`basename $0`
+if [ $# = 0 ]; then
+	echo "Usage: $script OPTIONS... PRJDIR"
+	echo "where OPTIONS can be:"
+	echo "  -v       enable verbose output"
+	echo "and PRJDIR represents the (parent) project maven dir"
+	exit 2
+fi
+
+directory="."
+verbose=0
+while [ $# -gt 0 ]; do
+	case $1 in
+		-v) verbose=1
+		    ;;
+		*)  directory="$1"
+		    ;;
+	esac
+	shift
+done
+
+if [ $verbose = 1 ]; then
+	echo "Directory ...................: $directory"
+fi
+
+echo "Hello World!"
