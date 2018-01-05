@@ -8,6 +8,7 @@ if [ $# = 0 ]; then
 	echo "where OPTIONS can be:"
 	echo "  -v       enable verbose output (default: false)"
 	echo "  -s       set the date since you need hoc (default: today)"
+	echo "  -t       set the date till you need hoc (default: today)"
 	echo "  -f       set a filter on all files to calculate an hoc on specific files/dirs (default: none)"
 	echo "and PRJDIR represents the (parent) project maven dir (default: current dir)"
 	echo ""
@@ -18,10 +19,14 @@ fi
 directory="."
 verbose=0
 since=`date "+%Y-%m-%d"`
+till=`date "+%Y-%m-%d"`
 filter=""
 while [ $# -gt 0 ]; do
 	case $1 in
 		-s) since="$2"
+		    shift
+		    ;;
+		-t) till="$2"
 		    shift
 		    ;;
 		-f) filter="$2"
@@ -38,6 +43,7 @@ done
 if [ $verbose = 1 ]; then
 	echo "Directory ...................: $directory"
 	echo "Since .......................: $since"
+	echo "Till ........................: $till"
 	echo "Filter ......................: $filter"
 fi
 
@@ -46,7 +52,7 @@ authors_file="/tmp/${script}_authors_$$"
 
 pushd $directory > /dev/null
 
-git --no-pager log --pretty=format:%an --date=iso --since="$since" | sort -u > $authors_file
+git --no-pager log --pretty=format:%an --date=iso --since="$since" --before="$till" | sort -u > $authors_file
 
 IFS="
 "
@@ -54,7 +60,7 @@ for author in `cat $authors_file`; do
 	author_stat_file="/tmp/${script}_author_stat_$$"
 
 	# extract stats for specific author...
-	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --since="$since" > $author_stat_file
+	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --since="$since" --before="$till" > $author_stat_file
 
 	# filter previous output...
 	if [ "x$filter" != "x" ]; then
