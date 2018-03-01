@@ -9,6 +9,11 @@ The script requires that you have installed on your system the following softwar
   * awk 
 
 
+## Installation
+
+This is a shell script (`/bin/sh`). So you have simply to clone this project and probably put it in your `PATH`.
+
+
 ## Usage
 
 ```
