@@ -60,7 +60,7 @@ for author in `cat $authors_file`; do
 	author_stat_file="/tmp/${script}_author_stat_$$"
 
 	# extract stats for specific author...
-	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --since="$since" --before="$till" > $author_stat_file
+	git --no-pager log --numstat --pretty=format:"%b" --no-merges --author="$author" --date=iso --ignore-space-change --ignore-all-space --ignore-submodules --find-copies-harder -M --diff-filter=ACDM --since="$since" --before="$till" > $author_stat_file
 
 	# filter previous output...
 	if [ "x$filter" != "x" ]; then
@@ -69,7 +69,7 @@ for author in `cat $authors_file`; do
 	fi
 
 	hoc=`awk 'BEGIN { hoc = 0 } /^[0-9]/ { hoc = hoc + $1 + $2 } END { print hoc }' $author_stat_file`
-	echo "$hoc $author"
+	echo "$hoc\t$author"
 done
 
 popd > /dev/null

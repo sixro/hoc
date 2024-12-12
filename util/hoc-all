@@ -1,0 +1,25 @@
+#! /bin/sh
+
+# WARNING: this is just a small utility to allow getting an hoc for all dirs. 
+# I decided to put it here, because I wrote this script 3 times for sure in the past years :)
+
+if [ $# != 3 ]; then
+	echo "Export hoc data for all projects in the current directory to specified files"
+	echo "Usage: hoc-all SINCE BEFORE FILEPATH"
+	echo "For FILEPATH define the directory too, otherwise with just a filename you'll have new files in each repository"
+	exit 2
+fi
+
+for DIR in `ls -d1 */`; do
+        echo "========================================================================"
+        echo "  $DIR"
+        echo "========================================================================"
+        echo ""
+        pushd $DIR
+        git checkout master
+        git pull
+
+	hoc -s $1 -t $2 >> $3
+        popd
+done
+
