@@ -40,7 +40,7 @@ hoc -s 2018-01-01 .
 you should obtains something like:
 
 ```
-10 Roberto Simoni
+10 "Roberto Simoni"
 ```
 
 where the 1st number is the `hoc` for the git user `Roberto Simoni`.  
